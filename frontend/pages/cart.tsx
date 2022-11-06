@@ -18,8 +18,6 @@ import CachedIcon from '@mui/icons-material/Cached';
 import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import Link from 'next/link';
-import React, { useEffect } from 'react';
-import { Store } from '../utils/store';
 import { useRouter } from 'next/router';
 import toast from 'react-hot-toast';
 import Head from 'next/head';
@@ -29,11 +27,11 @@ import { AppDispatch, RootState } from '../store/store';
 import { cartAddItem, cartRemoveItem } from '../store/slices/cartSlice';
 
 const CartScreen = () => {
-	const execute = useDispatch<AppDispatch>();
+	const dispatch = useDispatch<AppDispatch>();
 
 	const router = useRouter();
 	const updateCartHandler = async (item: any, quantity: number) => {
-		execute(
+		dispatch(
 			cartAddItem({
 				_key: item._key,
 				name: item.name,
@@ -50,13 +48,12 @@ const CartScreen = () => {
 	};
 
 	const removeItemHandler = (item: any) => {
-		execute(cartRemoveItem(item));
+		dispatch(cartRemoveItem(item));
 		toast(`${item.name} REMOVED`);
 	};
 
 	const { cartItems } = useSelector((state: RootState) => state.cart.cart);
-
-	const { dispatch, userInfo } = React.useContext(Store);
+	const { userInfo } = useSelector((state: RootState) => state.userInfo);
 
 	return (
 		<>

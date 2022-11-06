@@ -10,19 +10,24 @@ import { useRouter } from 'next/router';
 import { useContext, useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import CheckoutWizard from '../components/CheckoutWizard';
-
 import { getError } from '../utils/error';
 import { Store } from '../utils/store';
+//Redux Toolkit
+import { useDispatch, useSelector } from 'react-redux';
+import { AppDispatch, RootState } from '../store/store';
+import { savePaymentMethod } from '../store/slices/paymentSlice';
 
 const PlaceOrderScreen = () => {
 	const router = useRouter();
 	const { state, dispatch } = useContext(Store);
 	const [loading, setLoading] = useState(false);
 
-	const {
-		userInfo,
-		cart: { cartItems, shippingAddress, paymentMethod },
-	} = state;
+	const { userInfo } = useSelector((state: RootState) => state.userInfo);
+	const { paymentMethod, cartItems, shippingAddress } = useSelector(
+		(state: RootState) => state.payment.cart
+	);
+
+	console.log(userInfo);
 
 	const itemsPrice = +cartItems
 		.reduce((a: any, c: any) => a + c.quantity * c.price, 0)

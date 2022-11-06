@@ -30,11 +30,10 @@ function AccountScreen() {
 	const router = useRouter();
 
 	// Toolkit
-	const execute = useDispatch<AppDispatch>();
+	const dispatch = useDispatch<AppDispatch>();
 	const user = Cookies.get('userInfo');
-	const userInfo = JSON.parse(user);
-	// const { userInfo } = useSelector((state: RootState) => state.userInfo);
-	// console.log(userInfo2);
+	// const userInfo = JSON.parse(user);
+	const { userInfo } = useSelector((state: RootState) => state.userInfo);
 
 	// Password Handler
 	const [values, setValues] = useState({ password: '', showPassword: false });
@@ -50,23 +49,23 @@ function AccountScreen() {
 		formState: { errors },
 		setValue,
 	} = useForm();
-	const submitHandler = async (data: any) => {
+	//
+	const submitHandler = async (data: any, e) => {
+		e.preventDefault();
+
 		if (data.password === undefined || '') {
 			toast(`Please Enter Passwords`);
 			return;
 		}
-		console.log(data);
 		try {
 			if (data.password !== data.confirmPassword) {
 				toast(`Passwords Don't Match`);
 				return;
 			}
 
-			execute(updateUserProfile(data));
-			console.log(data);
+			dispatch(updateUserProfile(data));
 			setEdit(!edit);
 			toast('Profile Updated');
-			router.reload();
 		} catch (err) {
 			toast(getError(err));
 		}
@@ -87,7 +86,8 @@ function AccountScreen() {
 		setValue('state', userInfo?.state);
 		setValue('city', userInfo?.city);
 		setValue('postalCode', userInfo?.postalCode);
-	}, [router, setValue, userInfo, execute, user]);
+		// router.reload();
+	}, [router, setValue, userInfo, dispatch]);
 
 	return (
 		<Box

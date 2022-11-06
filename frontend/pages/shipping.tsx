@@ -1,12 +1,14 @@
-import React, { useContext, useEffect } from 'react';
+import { useEffect } from 'react';
 import { Button, Divider, Grid, TextField, Typography } from '@mui/material';
 import { Box } from '@mui/system';
 import CheckoutWizard from '../components/CheckoutWizard';
 import { Controller, useForm } from 'react-hook-form';
 import { useRouter } from 'next/router';
-import { Store } from '../utils/store';
-import jsCookie from 'js-cookie';
 import Head from 'next/head';
+//Redux Toolkit
+import { useDispatch, useSelector } from 'react-redux';
+import { AppDispatch, RootState } from '../store/store';
+import { saveShippingAddress } from '../store/slices/paymentSlice';
 
 interface RegisterProps {
 	email?: string[];
@@ -23,8 +25,8 @@ interface RegisterProps {
 }
 
 export default function ShippingScreen() {
-	const { state, dispatch } = useContext(Store);
 	const router = useRouter();
+	const dispatch = useDispatch<AppDispatch>();
 
 	const {
 		handleSubmit,
@@ -33,15 +35,12 @@ export default function ShippingScreen() {
 		setValue,
 	} = useForm();
 
-	const {
-		userInfo,
-		cart: { shippingAddress },
-	} = state;
+	const { userInfo } = useSelector((state: RootState) => state.userInfo);
+	const { shippingAddress } = useSelector((state: RootState) => state.payment.cart);
 
-	// @ts-ignore: Unreachable code error
 	useEffect(() => {
 		if (!userInfo) {
-			return router.push('/register');
+			router.push('/register');
 		}
 		setValue('firstName', shippingAddress.firstName || userInfo.firstName);
 		setValue('lastName', shippingAddress.lastName || userInfo.lastName);
@@ -54,42 +53,8 @@ export default function ShippingScreen() {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [router, setValue, userInfo]);
 
-	const submitHandler = ({
-		firstName,
-		lastName,
-		country,
-		address,
-		addressCont,
-		state,
-		city,
-		postalCode,
-	}: RegisterProps) => {
-		dispatch({
-			type: 'SAVE_SHIPPING_ADDRESS',
-			payload: {
-				firstName,
-				lastName,
-				country,
-				address,
-				addressCont,
-				state,
-				city,
-				postalCode,
-			},
-		});
-		jsCookie.set(
-			'shippingAddress',
-			JSON.stringify({
-				firstName,
-				lastName,
-				country,
-				address,
-				addressCont,
-				state,
-				city,
-				postalCode,
-			})
-		);
+	const submitHandler = (data: RegisterProps) => {
+		dispatch(saveShippingAddress(data));
 		router.push('/payment');
 	};
 

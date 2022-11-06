@@ -14,23 +14,23 @@ import { Box } from '@mui/system';
 import Cookies from 'js-cookie';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-import { useContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import CheckoutWizard from '../components/CheckoutWizard';
-
-import { Store } from '../utils/store';
+//Redux Toolkit
+import { useDispatch, useSelector } from 'react-redux';
+import { AppDispatch, RootState } from '../store/store';
+import { savePaymentMethod } from '../store/slices/paymentSlice';
 
 const PaymentScreen = () => {
-	const router = useRouter();
 	const [paymentMethod, setPaymentMethod] = useState('');
-	const { state, dispatch } = useContext(Store);
+	const dispatch = useDispatch<AppDispatch>();
+	const router = useRouter();
 
-	const {
-		cart: { shippingAddress },
-	} = state;
+	const { shippingAddress } = useSelector((state: RootState) => state.payment.cart);
 
 	useEffect(() => {
-		if (!shippingAddress.address) {
+		if (!shippingAddress) {
 			router.push('/shipping');
 		} else {
 			setPaymentMethod(Cookies.get('paymentMethod') || '');
@@ -42,8 +42,7 @@ const PaymentScreen = () => {
 		if (!paymentMethod) {
 			toast('Payment method is required');
 		} else {
-			dispatch({ type: 'SAVE_PAYMENT_METHOD', payload: paymentMethod });
-			Cookies.set('paymentMethod', paymentMethod);
+			dispatch(savePaymentMethod(paymentMethod));
 			router.push('/placeorder');
 		}
 	};

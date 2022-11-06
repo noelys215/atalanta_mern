@@ -16,21 +16,23 @@ export const paymentSlice = createSlice({
 	name: 'payment',
 	initialState,
 	reducers: {
-		saveShippingAddress: (state, action) => {
+		saveShippingAddress: (state, { payload }) => {
+			Cookies.set('shippingAddress', JSON.stringify(payload));
 			return {
 				...state,
 				cart: {
 					...state.cart,
-					shippingAddress: action.payload,
+					shippingAddress: payload,
 				},
 			};
 		},
-		savePaymentMethod: (state, action) => {
+		savePaymentMethod: (state, { payload }) => {
+			Cookies.set('paymentMethod', payload);
 			return {
 				...state,
 				cart: {
 					...state.cart,
-					paymentMethod: action.payload,
+					paymentMethod: { payload },
 				},
 			};
 		},
