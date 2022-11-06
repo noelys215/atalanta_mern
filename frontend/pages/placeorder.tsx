@@ -27,8 +27,7 @@ const PlaceOrderScreen = () => {
 		(state: RootState) => state.payment.cart
 	);
 
-	console.log(userInfo);
-
+	// Cart Totals
 	const itemsPrice = +cartItems
 		.reduce((a: any, c: any) => a + c.quantity * c.price, 0)
 		.toFixed(2);

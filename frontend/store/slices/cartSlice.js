@@ -41,6 +41,7 @@ export const cartSlice = createSlice({
 			return { ...state, cart: { ...state.cart, cartItems } };
 		},
 		cartClear: (state, action) => {
+			Cookies.remove('cartItems');
 			return { ...state, cart: { ...state.cart, cartItems: [] } };
 		},
 	},

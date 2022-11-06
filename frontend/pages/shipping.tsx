@@ -50,7 +50,6 @@ export default function ShippingScreen() {
 		setValue('state', shippingAddress.state || userInfo.state);
 		setValue('city', shippingAddress.city || userInfo.city);
 		setValue('postalCode', shippingAddress.postalCode || userInfo.postalCode);
-		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [router, setValue, userInfo]);
 
 	const submitHandler = (data: RegisterProps) => {
