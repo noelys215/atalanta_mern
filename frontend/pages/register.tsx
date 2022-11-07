@@ -46,7 +46,6 @@ const RegisterScreen = () => {
 	// Toolkit
 	const dispatch = useDispatch<AppDispatch>();
 	const { userInfo } = useSelector((state: RootState) => state.userInfo);
-	console.log(userInfo);
 
 	useEffect(() => {
 		if (userInfo) {

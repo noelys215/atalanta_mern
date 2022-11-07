@@ -1,13 +1,11 @@
 import { Button, CircularProgress, Divider, Grid, List, ListItem, Typography } from '@mui/material';
 import { Box } from '@mui/system';
-import axios from 'axios';
-import Cookies from 'js-cookie';
 import dynamic from 'next/dynamic';
 import Head from 'next/head';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { useContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import CheckoutWizard from '../components/CheckoutWizard';
 import { getError } from '../utils/error';
@@ -15,14 +13,17 @@ import { Store } from '../utils/store';
 //Redux Toolkit
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../store/store';
-import { savePaymentMethod } from '../store/slices/paymentSlice';
+import { createOrder } from '../store/actions/createOrder';
+import { cartClear } from '../store/slices/cartSlice';
 
 const PlaceOrderScreen = () => {
 	const router = useRouter();
-	const { state, dispatch } = useContext(Store);
 	const [loading, setLoading] = useState(false);
+	//
+	const dispatch = useDispatch<AppDispatch>();
+	const { order }: any = useSelector((state: RootState) => state);
+	console.log(order);
 
-	const { userInfo } = useSelector((state: RootState) => state.userInfo);
 	const { paymentMethod, cartItems, shippingAddress } = useSelector(
 		(state: RootState) => state.payment.cart
 	);
@@ -47,32 +48,20 @@ const PlaceOrderScreen = () => {
 	const placeOrderHandler = async () => {
 		try {
 			setLoading(true);
-			setLoading(true);
-			const { data } = await axios.post(
-				'/api/orders',
-				{
-					orderItems: cartItems.map((x: any) => ({
-						...x,
-						countInStock: undefined,
-						slug: undefined,
-					})),
+			await dispatch(
+				createOrder({
+					orderItems: cartItems,
 					shippingAddress,
 					paymentMethod,
 					itemsPrice,
 					shippingPrice,
 					taxPrice,
 					totalPrice,
-				},
-				{
-					headers: {
-						authorization: `Bearer ${userInfo.token}`,
-					},
-				}
-			);
-			dispatch({ type: 'CART_CLEAR' });
-			Cookies.remove('cartItems');
-			setLoading(false);
-			router.push(`/order/${data}`);
+				})
+			).then(() => setLoading(false));
+			// .then(() => console.log())
+			// .then(() => router.push(`/order/${order._id}`));
+			// .then(() => dispatch(cartClear({})));
 		} catch (error) {
 			setLoading(false);
 			toast(getError(error));

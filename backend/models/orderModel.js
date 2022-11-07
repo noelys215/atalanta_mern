@@ -8,11 +8,17 @@ const orderSchema = mongoose.Schema(
 			ref: 'User',
 		},
 		orderItems: [
-			{ name: { type: String, required: true } },
-			{ qty: { type: Number, required: true } },
-			{ image: { type: String, required: true } },
-			{ price: { type: Number, required: true } },
-			{ product: { type: mongoose.Schema.Types.ObjectId, required: true, ref: 'Product' } },
+			{
+				countInStock: [{ size: String, quantity: Number }],
+				name: { type: String, required: true },
+				quantity: { type: Number, required: true },
+				image: { type: String, required: true },
+				price: { type: Number, required: true },
+				path: { type: String, required: true },
+				selectedSize: { type: String, required: true },
+				slug: { type: String, required: true },
+				product: { type: mongoose.Schema.Types.ObjectId, ref: 'Product' },
+			},
 		],
 		shippingAddress: {
 			country: { type: String, required: true },
