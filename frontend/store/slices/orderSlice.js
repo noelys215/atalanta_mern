@@ -1,8 +1,13 @@
 import { createSlice, current } from '@reduxjs/toolkit';
+import Cookies from 'js-cookie';
 import { createOrder } from '../actions/createOrder';
+import { getOrderDetails } from '../actions/getOrderDetails';
 
-const initialState = { loading: false, order: {}, error: '' };
-
+const initialState = {
+	loading: false,
+	order: Cookies.get('orders') || {},
+	error: '',
+};
 export const orderSlice = createSlice({
 	name: 'order',
 	initialState,
@@ -14,12 +19,26 @@ export const orderSlice = createSlice({
 		},
 		[createOrder.fulfilled]: (state, { payload }) => {
 			console.log('Order Fulfilled');
-			state.loading = false;
 			state.order = payload;
-			console.log(payload);
+			state.loading = false;
 		},
 		[createOrder.rejected]: (state, { payload, error }) => {
 			console.log('Order Rejected');
+			state.loading = false;
+			state.error = payload;
+		},
+		// Get order details reducer ...
+		[getOrderDetails.pending]: (state) => {
+			console.log('Get Order Pending');
+			state.loading = true;
+		},
+		[getOrderDetails.fulfilled]: (state, { payload }) => {
+			console.log('Get Order Fulfilled');
+			state.order = payload;
+			state.loading = false;
+		},
+		[getOrderDetails.rejected]: (state, { payload, error }) => {
+			console.log('Get Order Rejected');
 			state.loading = false;
 			state.error = payload;
 		},

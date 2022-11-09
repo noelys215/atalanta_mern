@@ -4,12 +4,16 @@ import axios from 'axios';
 import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
-import { useContext, useEffect, useReducer } from 'react';
+import { useEffect, useReducer } from 'react';
 import toast from 'react-hot-toast';
 import { getError } from '../../utils/error';
-import { Store } from '../../utils/store';
 import { PayPalButtons, usePayPalScriptReducer } from '@paypal/react-paypal-js';
 import Layout from '../../components/Layout';
+//Redux Toolkit
+import { useDispatch, useSelector } from 'react-redux';
+import { AppDispatch, RootState } from '../../store/store';
+import { getOrderDetails } from '../../store/actions/getOrderDetails';
+import { cartClear } from '../../store/slices/cartSlice';
 
 function reducer(state: any, action: any) {
 	switch (action.type) {
@@ -31,12 +35,24 @@ function reducer(state: any, action: any) {
 }
 
 const OrderHistoryScreen = ({ params }: any) => {
+	const router = useRouter();
+	// Toolkit
+	const execute = useDispatch<AppDispatch>();
+	const { userInfo } = useSelector((state: RootState) => state.userInfo);
+	const { order: data, loading, error }: any = useSelector((state: RootState) => state.order);
+
+	const order = JSON.parse(data);
 	const { id: orderId } = params;
-	const [{ loading, error, order, successPay }, dispatch] = useReducer(reducer, {
-		loading: true,
-		order: {},
-		error: '',
-	});
+	//
+	useEffect(() => {
+		// if (loading) {
+		// 	execute(getOrderDetails(orderId));
+		// }
+		if (!order || order._id !== orderId) {
+			execute(getOrderDetails(orderId));
+		}
+	}, []);
+	//
 
 	const {
 		shippingAddress,
@@ -52,52 +68,62 @@ const OrderHistoryScreen = ({ params }: any) => {
 		deliveredAt,
 	} = order;
 
-	const router = useRouter();
-	const { state } = useContext(Store);
-	const { userInfo } = state;
+	const [
+		{
+			// loading,
+			// error,
+			// order,
+			successPay,
+		},
+		dispatch,
+	] = useReducer(reducer, {
+		loading: true,
+		order: {},
+		error: '',
+	});
 
 	const [{ isPending }, paypalDispatch] = usePayPalScriptReducer();
 
 	// @ts-ignore: Unreachable code error
-	useEffect(() => {
-		if (!userInfo) {
-			return router.push('/login');
-		}
-		const fetchOrder = async () => {
-			try {
-				dispatch({ type: 'FETCH_REQUEST' });
-				const { data } = await axios.get(`/api/orders/${orderId}`, {
-					headers: { authorization: `Bearer ${userInfo.token}` },
-				});
+	// useEffect(() => {
+	// 	if (!userInfo) {
+	// 		return router.push('/login');
+	// 	}
+	// 	const fetchOrder = async () => {
+	// 		try {
+	// 			dispatch({ type: 'FETCH_REQUEST' });
+	// 			const { data } = await axios.get(`/api/orders/${orderId}`, {
+	// 				headers: { authorization: `Bearer ${userInfo.token}` },
+	// 			});
 
-				dispatch({ type: 'FETCH_SUCCESS', payload: data });
-			} catch (err) {
-				dispatch({ type: 'FETCH_FAIL', payload: getError(err) });
-			}
-		};
-		if (!order._id || successPay || (order._id && order._id !== orderId)) {
-			fetchOrder();
-			if (successPay) {
-				dispatch({ type: 'PAY_RESET' });
-			}
-		} else {
-			const loadPaypalScript = async () => {
-				const { data: clientId } = await axios.get('/api/keys/paypal', {
-					headers: { authorization: `Bearer ${userInfo.token}` },
-				});
-				paypalDispatch({
-					type: 'resetOptions',
-					value: {
-						'client-id': clientId,
-						currency: 'USD',
-					},
-				});
-				// @ts-ignore: Unreachable code error
-				paypalDispatch({ type: 'setLoadingStatus', value: 'pending' });
-			};
-			loadPaypalScript();
-		}
-	}, [order, orderId, paypalDispatch, router, successPay, userInfo]);
+	// 			dispatch({ type: 'FETCH_SUCCESS', payload: data });
+	// 		} catch (err) {
+	// 			dispatch({ type: 'FETCH_FAIL', payload: getError(err) });
+	// 		}
+	// 	};
+	// 	if (!order._id || successPay || (order._id && order._id !== orderId)) {
+	// 		fetchOrder();
+	// 		if (successPay) {
+	// 			dispatch({ type: 'PAY_RESET' });
+	// 		}
+	// 	} else {
+	// 		const loadPaypalScript = async () => {
+	// 			const { data: clientId } = await axios.get('/api/keys/paypal', {
+	// 				headers: { authorization: `Bearer ${userInfo.token}` },
+	// 			});
+	// 			paypalDispatch({
+	// 				type: 'resetOptions',
+	// 				value: {
+	// 					'client-id': clientId,
+	// 					currency: 'USD',
+	// 				},
+	// 			});
+	// 			// @ts-ignore: Unreachable code error
+	// 			paypalDispatch({ type: 'setLoadingStatus', value: 'pending' });
+	// 		};
+	// 		loadPaypalScript();
+	// 	}
+	// }, [order, orderId, paypalDispatch, router, successPay, userInfo]);
 
 	function createOrder(data: any, actions: any) {
 		return actions.order
@@ -245,7 +271,7 @@ const OrderHistoryScreen = ({ params }: any) => {
 											<ListItem>
 												<Grid container>
 													<Grid item xs={6}>
-														<Typography>Items:</Typography>
+														<Typography>Items Price: </Typography>
 													</Grid>
 													<Grid item xs={6}>
 														<Typography align="right">

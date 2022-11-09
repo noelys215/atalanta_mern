@@ -2,9 +2,9 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 import Cookies from 'js-cookie';
 
-export const createOrder = createAsyncThunk(
-	'order/createOrder',
-	async (order: any, { getState, rejectWithValue }: any) => {
+export const getOrderDetails = createAsyncThunk(
+	'user/getOrderDetails',
+	async (id: string, { getState, rejectWithValue }: any) => {
 		try {
 			// get user data from store
 			const {
@@ -13,20 +13,12 @@ export const createOrder = createAsyncThunk(
 
 			// configure authorization header with user's token
 			const config = {
-				headers: {
-					'Content-Type': 'application/json',
-					Authorization: `Bearer ${userInfo.token}`,
-				},
+				headers: { Authorization: `Bearer ${userInfo.token}` },
 			};
 
-			// create post request with order data
-			const { data }: any = await axios.post(
-				`http://127.0.0.1:5000/api/orders`,
-				order,
-				config
-			);
+			const { data }: any = await axios.get(`http://127.0.0.1:5000/api/orders/${id}`, config);
 
-			Cookies.set('orders', JSON.stringify(order));
+			Cookies.set('orders', JSON.stringify(data));
 			return data;
 		} catch (error: any) {
 			if (error.response && error.response.data.message) {
