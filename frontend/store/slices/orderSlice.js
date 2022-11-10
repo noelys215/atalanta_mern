@@ -7,6 +7,7 @@ const initialState = {
 	loading: false,
 	order: Cookies.get('orders') || {},
 	error: '',
+	success: false,
 };
 export const orderSlice = createSlice({
 	name: 'order',

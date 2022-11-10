@@ -4,55 +4,61 @@ import axios from 'axios';
 import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
-import { useEffect, useReducer } from 'react';
+import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { getError } from '../../utils/error';
-import { PayPalButtons, usePayPalScriptReducer } from '@paypal/react-paypal-js';
+// import { PayPalButtons, usePayPalScriptReducer } from '@paypal/react-paypal-js';
+import { PayPalButton } from 'react-paypal-button-v2';
+
 import Layout from '../../components/Layout';
 //Redux Toolkit
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../../store/store';
 import { getOrderDetails } from '../../store/actions/getOrderDetails';
 import { cartClear } from '../../store/slices/cartSlice';
-
-function reducer(state: any, action: any) {
-	switch (action.type) {
-		case 'FETCH_REQUEST':
-			return { ...state, loading: true, error: '' };
-		case 'FETCH_SUCCESS':
-			return { ...state, loading: false, order: action.payload, error: '' };
-		case 'FETCH_FAIL':
-			return { ...state, loading: false, error: action.payload };
-		case 'PAY_REQUEST':
-			return { ...state, loadingPay: true };
-		case 'PAY_SUCCESS':
-			return { ...state, loadingPay: false, successPay: true };
-		case 'PAY_FAIL':
-			return { ...state, loadingPay: false, errorPay: action.payload };
-		case 'PAY_RESET':
-			return { ...state, loadingPay: false, successPay: false, errorPay: '' };
-	}
-}
+import { payOrder } from '../../store/actions/payOrder';
+import { payReset } from '../../store/slices/orderPaySlice';
 
 const OrderHistoryScreen = ({ params }: any) => {
 	const router = useRouter();
+	const [sdkReady, setSdkReady] = useState(false);
 	// Toolkit
 	const execute = useDispatch<AppDispatch>();
 	const { userInfo } = useSelector((state: RootState) => state.userInfo);
 	const { order: data, loading, error }: any = useSelector((state: RootState) => state.order);
+	const { loading: loadingPay, success: successPay }: any = useSelector(
+		(state: RootState) => state.orderPay
+	);
 
 	const order = JSON.parse(data);
 	const { id: orderId } = params;
 	//
 	useEffect(() => {
-		// if (loading) {
-		// 	execute(getOrderDetails(orderId));
-		// }
-		if (!order || order._id !== orderId) {
+		if (loading || !order) {
 			execute(getOrderDetails(orderId));
 		}
-	}, []);
-	//
+		// PayPal
+		const addPayPalScript = async () => {
+			const { data: clientId } = await axios.get('http://127.0.0.1:5000/api/config/paypal');
+			const script = document.createElement('script');
+			script.type = 'text/javascript';
+			script.src = `https://www.paypal.com/sdk/js?client-id=${clientId}`;
+			script.async = true;
+			script.onload = () => setSdkReady(true);
+			document.body.appendChild(script);
+		};
+
+		if (successPay || !order || order._id !== orderId) {
+			execute(payReset({}));
+			execute(getOrderDetails(orderId));
+		} else if (!order.isPaid) {
+			if (!window.paypal) {
+				addPayPalScript();
+			} else {
+				setSdkReady(true);
+			}
+		}
+	}, [execute, orderId, successPay, order]);
 
 	const {
 		shippingAddress,
@@ -68,94 +74,11 @@ const OrderHistoryScreen = ({ params }: any) => {
 		deliveredAt,
 	} = order;
 
-	const [
-		{
-			// loading,
-			// error,
-			// order,
-			successPay,
-		},
-		dispatch,
-	] = useReducer(reducer, {
-		loading: true,
-		order: {},
-		error: '',
-	});
+	const successPaymentHandler = (paymentResult: any) => {
+		execute(payOrder({ orderId: orderId, paymentResult }));
+	};
 
-	const [{ isPending }, paypalDispatch] = usePayPalScriptReducer();
-
-	// @ts-ignore: Unreachable code error
-	// useEffect(() => {
-	// 	if (!userInfo) {
-	// 		return router.push('/login');
-	// 	}
-	// 	const fetchOrder = async () => {
-	// 		try {
-	// 			dispatch({ type: 'FETCH_REQUEST' });
-	// 			const { data } = await axios.get(`/api/orders/${orderId}`, {
-	// 				headers: { authorization: `Bearer ${userInfo.token}` },
-	// 			});
-
-	// 			dispatch({ type: 'FETCH_SUCCESS', payload: data });
-	// 		} catch (err) {
-	// 			dispatch({ type: 'FETCH_FAIL', payload: getError(err) });
-	// 		}
-	// 	};
-	// 	if (!order._id || successPay || (order._id && order._id !== orderId)) {
-	// 		fetchOrder();
-	// 		if (successPay) {
-	// 			dispatch({ type: 'PAY_RESET' });
-	// 		}
-	// 	} else {
-	// 		const loadPaypalScript = async () => {
-	// 			const { data: clientId } = await axios.get('/api/keys/paypal', {
-	// 				headers: { authorization: `Bearer ${userInfo.token}` },
-	// 			});
-	// 			paypalDispatch({
-	// 				type: 'resetOptions',
-	// 				value: {
-	// 					'client-id': clientId,
-	// 					currency: 'USD',
-	// 				},
-	// 			});
-	// 			// @ts-ignore: Unreachable code error
-	// 			paypalDispatch({ type: 'setLoadingStatus', value: 'pending' });
-	// 		};
-	// 		loadPaypalScript();
-	// 	}
-	// }, [order, orderId, paypalDispatch, router, successPay, userInfo]);
-
-	function createOrder(data: any, actions: any) {
-		return actions.order
-			.create({
-				purchase_units: [
-					{
-						amount: { value: totalPrice },
-					},
-				],
-			})
-			.then((orderID: any) => {
-				return orderID;
-			});
-	}
-	function onApprove(data: any, actions: any) {
-		return actions.order.capture().then(async function (details: any) {
-			try {
-				dispatch({ type: 'PAY_REQUEST' });
-				const { data } = await axios.put(`/api/orders/${order._id}/pay`, details, {
-					headers: { authorization: `Bearer ${userInfo.token}` },
-				});
-				dispatch({ type: 'PAY_SUCCESS', payload: data });
-				toast('Order is paid');
-			} catch (err) {
-				dispatch({ type: 'PAY_FAIL', payload: getError(err) });
-				toast(getError(err));
-			}
-		});
-	}
-	function onError(err: any) {
-		toast(getError(err));
-	}
+	const onError = (err: any) => toast(getError(err));
 
 	return (
 		<Layout title={'Order'}>
@@ -324,28 +247,14 @@ const OrderHistoryScreen = ({ params }: any) => {
 									{/* Paypal */}
 									{!isPaid && (
 										<Grid item md={5} sm={12} xs={12}>
-											{isPending ? (
+											{loadingPay && <CircularProgress />}
+											{!sdkReady ? (
 												<CircularProgress />
 											) : (
-												<Box width={'100%'} mt={{ xs: 1, md: 6 }}>
-													<PayPalButtons
-														fundingSource={'paypal'}
-														style={{
-															color: 'black',
-															label: 'checkout',
-														}}
-														createOrder={createOrder}
-														onApprove={onApprove}
-														onError={onError}
-													/>
-													<PayPalButtons
-														fundingSource={'paylater'}
-														style={{
-															color: 'black',
-															label: 'checkout',
-														}}
-														createOrder={createOrder}
-														onApprove={onApprove}
+												<Box width={'100%'} mt={0}>
+													<PayPalButton
+														amount={totalPrice}
+														onSuccess={successPaymentHandler}
 														onError={onError}
 													/>
 												</Box>
