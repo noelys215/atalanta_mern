@@ -13,56 +13,25 @@ import {
 	Typography,
 } from '@mui/material';
 import { Box } from '@mui/system';
-import axios from 'axios';
 import dynamic from 'next/dynamic';
 import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { useContext, useEffect, useReducer } from 'react';
-import { getError } from '../utils/error';
-import { Store } from '../utils/store';
-
-function reducer(state: any, action: any) {
-	switch (action.type) {
-		case 'FETCH_REQUEST':
-			return { ...state, loading: true, error: '' };
-		case 'FETCH_SUCCESS':
-			return { ...state, loading: false, orders: action.payload, error: '' };
-		case 'FETCH_FAIL':
-			return { ...state, loading: false, error: action.payload };
-		default:
-			state;
-	}
-}
+import { useEffect } from 'react';
+//Redux Toolkit
+import { useDispatch, useSelector } from 'react-redux';
+import { AppDispatch, RootState } from '../store/store';
+import { getOrderHistory } from '../store/actions/getOrderHistory';
 
 function OrderHistoryScreen() {
 	const router = useRouter();
-	const { state } = useContext(Store);
-	const { userInfo } = state;
-
-	const [{ loading, error, orders }, dispatch] = useReducer(reducer, {
-		loading: 'true',
-		orders: [],
-		error: '',
-	});
+	const dispatch = useDispatch<AppDispatch>();
+	const { loading, error, orders }: any = useSelector((state: RootState) => state.orderHistory);
+	const { userInfo } = useSelector((state: RootState) => state.userInfo);
 
 	useEffect(() => {
-		if (!userInfo) {
-			router.push('/register');
-		}
-		const fetchOrders = async () => {
-			try {
-				dispatch({ type: 'FETCH_REQUEST' });
-				const { data } = await axios.get(`/api/orders/history`, {
-					headers: { authorization: `Bearer ${userInfo.token}` },
-				});
-
-				dispatch({ type: 'FETCH_SUCCESS', payload: data });
-			} catch (err) {
-				dispatch({ type: 'FETCH_FAIL', payload: getError(err) });
-			}
-		};
-		fetchOrders();
+		if (!userInfo) router.push('/register');
+		dispatch(getOrderHistory({}));
 	}, [router, userInfo]);
 
 	return (
@@ -109,7 +78,8 @@ function OrderHistoryScreen() {
 									<TableCell>DATE</TableCell>
 									<TableCell>TOTAL</TableCell>
 									<TableCell>PAID</TableCell>
-									<TableCell>ACTION</TableCell>
+									<TableCell>DELIVERY</TableCell>
+									<TableCell>ACTIONS</TableCell>
 								</TableRow>
 							</TableHead>
 							<TableBody>
@@ -119,7 +89,14 @@ function OrderHistoryScreen() {
 										<TableCell>{order.createdAt}</TableCell>
 										<TableCell>$ {order.totalPrice}</TableCell>
 										<TableCell>
-											{order.isPaid ? `Paid on: ${order.paidAt}` : 'not paid'}
+											{order.isPaid
+												? `Paid on: ${order.paidAt.split('T')[0]}`
+												: 'Not Paid'}
+										</TableCell>
+										<TableCell>
+											{order.isDelivered
+												? `Paid on: ${order.delivered.split('T')[0]}`
+												: 'Not Delivered'}
 										</TableCell>
 										<TableCell>
 											<Link href={`/order/${order._id}`} passHref>

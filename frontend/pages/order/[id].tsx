@@ -7,9 +7,7 @@ import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { getError } from '../../utils/error';
-// import { PayPalButtons, usePayPalScriptReducer } from '@paypal/react-paypal-js';
 import { PayPalButton } from 'react-paypal-button-v2';
-
 import Layout from '../../components/Layout';
 //Redux Toolkit
 import { useDispatch, useSelector } from 'react-redux';
@@ -23,7 +21,7 @@ const OrderHistoryScreen = ({ params }: any) => {
 	const router = useRouter();
 	const [sdkReady, setSdkReady] = useState(false);
 	// Toolkit
-	const execute = useDispatch<AppDispatch>();
+	const dispatch = useDispatch<AppDispatch>();
 	const { userInfo } = useSelector((state: RootState) => state.userInfo);
 	const { order: data, loading, error }: any = useSelector((state: RootState) => state.order);
 	const { loading: loadingPay, success: successPay }: any = useSelector(
@@ -35,7 +33,7 @@ const OrderHistoryScreen = ({ params }: any) => {
 	//
 	useEffect(() => {
 		if (loading || !order) {
-			execute(getOrderDetails(orderId));
+			dispatch(getOrderDetails(orderId));
 		}
 		// PayPal
 		const addPayPalScript = async () => {
@@ -49,8 +47,8 @@ const OrderHistoryScreen = ({ params }: any) => {
 		};
 
 		if (successPay || !order || order._id !== orderId) {
-			execute(payReset({}));
-			execute(getOrderDetails(orderId));
+			dispatch(payReset({}));
+			dispatch(getOrderDetails(orderId));
 		} else if (!order.isPaid) {
 			if (!window.paypal) {
 				addPayPalScript();
@@ -58,7 +56,7 @@ const OrderHistoryScreen = ({ params }: any) => {
 				setSdkReady(true);
 			}
 		}
-	}, [execute, orderId, successPay, order]);
+	}, [dispatch, orderId, successPay, order]);
 
 	const {
 		shippingAddress,
@@ -75,7 +73,7 @@ const OrderHistoryScreen = ({ params }: any) => {
 	} = order;
 
 	const successPaymentHandler = (paymentResult: any) => {
-		execute(payOrder({ orderId: orderId, paymentResult }));
+		dispatch(payOrder({ orderId: orderId, paymentResult }));
 	};
 
 	const onError = (err: any) => toast(getError(err));
