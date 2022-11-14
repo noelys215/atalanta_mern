@@ -4,6 +4,8 @@ import { registerUser } from '../actions/userActions';
 import { loginUser } from '../actions/loginAction';
 import { getUserProfile } from '../actions/getUserProfile';
 import { updateUserProfile } from '../actions/updateUserProfile';
+import { getUserList } from '../actions/getUserList';
+import { deleteUser } from '../actions/deleteUser';
 
 const initialState = {
 	cart: {
@@ -14,19 +16,17 @@ const initialState = {
 		paymentMethod: Cookies.get('paymentMethod') ? Cookies.get('paymentMethod') : '',
 	},
 	userInfo: Cookies.get('userInfo') ? JSON.parse(Cookies.get('userInfo')) : null,
+	users: [],
+	loading: false,
+	error: '',
+	success: false,
 };
 
 export const userSlice = createSlice({
 	name: 'userInfo',
 	initialState,
 	reducers: {
-		// registerUser: (state, action) => {
-		// 	return { ...state, userInfo: action.payload };
-		// },
-		// loginUser: (state, action) => {
-		// 	return { ...state, userInfo: action.payload };
-		// },
-		logoutUser: (state, action) => {
+		logoutUser: (state) => {
 			Cookies.remove('userInfo');
 			Cookies.remove('cartItems');
 			Cookies.remove('shippingAddress');
@@ -39,20 +39,19 @@ export const userSlice = createSlice({
 		},
 	},
 	extraReducers: {
-		// register user
+		// Register User
 		[registerUser.pending]: (state) => {
 			state.loading = true;
 			state.error = null;
 		},
 		[registerUser.fulfilled]: (state, { payload }) => {
 			state.loading = false;
-			state.success = true; // registration successful
 		},
 		[registerUser.rejected]: (state, { payload }) => {
 			state.loading = false;
 			state.error = payload;
 		},
-		// login user
+		// Login User
 		[loginUser.pending]: (state) => {
 			state.loading = true;
 			state.error = null;
@@ -65,7 +64,7 @@ export const userSlice = createSlice({
 			state.loading = false;
 			state.error = payload;
 		},
-		// get user reducer ...
+		// Get Single User Profile Reducer ...
 		[getUserProfile.pending]: (state) => {
 			state.loading = true;
 		},
@@ -76,7 +75,7 @@ export const userSlice = createSlice({
 		[getUserProfile.rejected]: (state, { payload }) => {
 			state.loading = false;
 		},
-		// update user reducer ...
+		// Update User Reducer ...
 		[updateUserProfile.pending]: (state) => {
 			state.loading = true;
 		},
@@ -85,6 +84,28 @@ export const userSlice = createSlice({
 			state.userInfo = payload;
 		},
 		[updateUserProfile.rejected]: (state, { payload }) => {
+			state.loading = false;
+		},
+		// Delete User Reducer ...
+		[deleteUser.pending]: (state) => {
+			state.loading = true;
+		},
+		[deleteUser.fulfilled]: (state) => {
+			state.loading = false;
+			state.success = true;
+		},
+		[deleteUser.rejected]: (state, { payload }) => {
+			state.loading = false;
+		},
+		// Get User List Reducer ...
+		[getUserList.pending]: (state) => {
+			state.loading = true;
+		},
+		[getUserList.fulfilled]: (state, { payload }) => {
+			state.loading = false;
+			state.users = payload;
+		},
+		[getUserList.rejected]: (state, { payload }) => {
 			state.loading = false;
 		},
 	},

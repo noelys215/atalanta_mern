@@ -13,12 +13,12 @@ import CloseIcon from '@mui/icons-material/Close';
 import Link from '../src/Link';
 import PersonOutlineTwoToneIcon from '@mui/icons-material/PersonOutlineTwoTone';
 import Inventory2TwoToneIcon from '@mui/icons-material/Inventory2TwoTone';
+import ManageAccountsTwoToneIcon from '@mui/icons-material/ManageAccountsTwoTone';
 import SettingsTwoToneIcon from '@mui/icons-material/SettingsTwoTone';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import Button from '@mui/material/Button';
 import { useRouter } from 'next/router';
 import { useForm, Controller } from 'react-hook-form';
-import { Store } from '../utils/store';
 import toast from 'react-hot-toast';
 //Redux Toolkit
 import { useDispatch, useSelector } from 'react-redux';
@@ -302,6 +302,20 @@ const AccountDrawer = () => {
 									Order History
 								</Typography>
 							</Link>
+
+							{userInfo.isAdmin && (
+								<Link
+									underline="hover"
+									href={'/admin/user-list'}
+									onClick={() => setOpenDrawer(false)}>
+									<Typography variant="h6" gutterBottom>
+										<ManageAccountsTwoToneIcon
+											sx={{ verticalAlign: 'middle', fontSize: 'inherit' }}
+										/>{' '}
+										User List
+									</Typography>
+								</Link>
+							)}
 						</Box>
 						<Box
 							sx={{
