@@ -29,7 +29,7 @@ import { AppDispatch, RootState } from '../../store/store';
 import { getUserList } from '../../store/actions/getUserList';
 import { deleteUser } from '../../store/actions/deleteUser';
 
-function OrderHistoryScreen() {
+function UserListScreen() {
 	const router = useRouter();
 	const [loading, setLoading] = useState(false);
 	const dispatch = useDispatch<AppDispatch>();
@@ -45,102 +45,109 @@ function OrderHistoryScreen() {
 		if (userInfo && userInfo.isAdmin) {
 			dispatch(getUserList());
 		} else {
-			console.log(users);
 			router.push('/');
 		}
+
 		setLoading(false);
-	}, [dispatch, router, success]);
+	}, [dispatch, router, success, userInfo, loading]);
 
 	const deleteHandler = (user: string) => {
 		dispatch(deleteUser(user)).then(() => router.reload());
 	};
 
 	return (
-		<Box
-			mb={'auto'}
-			maxWidth="lg"
-			sx={{
-				p: 2,
-				minHeight: '62.5rem',
-				width: '100%',
-				m: 'auto',
-				mt: 10,
-				backgroundColor: '#fffcf7',
-				display: 'flex',
-				flexDirection: 'column',
-			}}>
-			<Head>
-				<title> User List - Atalanta A.C.</title>
-			</Head>
-			<Grid item md={12} sm={12} xs={12}>
-				<Box sx={{ width: { md: '80%', sm: '100%' }, m: 'auto' }}>
-					<Typography variant="h6" sx={{ mt: 4 }}>
-						User List
-					</Typography>
-					<Divider sx={{ mb: 4, justifySelf: 'center' }} />
-				</Box>
-				{loading && <CircularProgress sx={{ display: 'flex', justifyContent: 'center' }} />}
+		<>
+			<Box
+				mb={'auto'}
+				maxWidth="lg"
+				sx={{
+					p: 2,
+					minHeight: '62.5rem',
+					width: '100%',
+					m: 'auto',
+					mt: 10,
+					backgroundColor: '#fffcf7',
+					display: 'flex',
+					flexDirection: 'column',
+				}}>
+				<Head>
+					<title> User List - Atalanta A.C.</title>
+				</Head>
+				<Grid item md={12} sm={12} xs={12}>
+					<Box sx={{ width: { md: '80%', sm: '100%' }, m: 'auto' }}>
+						<Typography variant="h6" sx={{ mt: 4 }}>
+							User List
+						</Typography>
+						<Divider sx={{ mb: 4, justifySelf: 'center' }} />
+					</Box>
+					{/* {loading && (
+						<CircularProgress sx={{ display: 'flex', justifyContent: 'center' }} />
+					)} */}
 
-				<TableContainer>
-					<Table
-						sx={{
-							width: { md: '80%', sm: '100%' },
-							whiteSpace: 'nowrap',
-							m: 'auto',
-						}}>
-						<TableHead>
-							<TableRow>
-								<TableCell>ID</TableCell>
-								<TableCell>NAME</TableCell>
-								<TableCell>EMAIL</TableCell>
-								<TableCell>ADMIN</TableCell>
-								<TableCell></TableCell>
-								<TableCell></TableCell>
-							</TableRow>
-						</TableHead>
-						<TableBody>
-							{users.map((user: any) => (
-								<TableRow key={user._id}>
-									<TableCell>{user._id}</TableCell>
-									<TableCell>
-										{user.lastName} {user.firstName}
-									</TableCell>
-									<TableCell>
-										<Link href={`mailto:${user.email}`}>{user.email}</Link>
-									</TableCell>
-									<TableCell>
-										<strong>
-											{user.isAdmin ? (
-												<CheckTwoToneIcon />
-											) : (
-												<CloseTwoToneIcon />
-											)}
-										</strong>
-									</TableCell>
-									<TableCell>
-										<Link href={`/user/${user._id}/edit`}>
-											<Button variant="contained">
-												<EditIcon />
-											</Button>
-										</Link>
-									</TableCell>
-									<TableCell>
-										<Button
-											variant="contained"
-											onClick={() => deleteHandler(user._id)}>
-											<DeleteForeverTwoToneIcon />
-										</Button>
-									</TableCell>
+					<TableContainer>
+						<Table
+							sx={{
+								width: { md: '80%', sm: '100%' },
+								whiteSpace: 'nowrap',
+								m: 'auto',
+							}}>
+							<TableHead>
+								<TableRow>
+									<TableCell>ID</TableCell>
+									<TableCell>NAME</TableCell>
+									<TableCell>EMAIL</TableCell>
+									<TableCell>ADMIN</TableCell>
+									<TableCell></TableCell>
+									<TableCell></TableCell>
 								</TableRow>
-							))}
-						</TableBody>
-					</Table>
-				</TableContainer>
-			</Grid>
-		</Box>
+							</TableHead>
+							<TableBody>
+								{users.length > 0 &&
+									users.map((user: any) => (
+										<TableRow key={user._id}>
+											<TableCell>{user._id}</TableCell>
+											<TableCell>
+												{user.lastName} {user.firstName}
+											</TableCell>
+											<TableCell>
+												<Link href={`mailto:${user.email}`}>
+													{user.email}
+												</Link>
+											</TableCell>
+											<TableCell>
+												<strong>
+													{user.isAdmin ? (
+														<CheckTwoToneIcon />
+													) : (
+														<CloseTwoToneIcon />
+													)}
+												</strong>
+											</TableCell>
+											<TableCell>
+												<Link href={`/admin/user/edit/${user._id}`}>
+													<Button variant="contained">
+														<EditIcon />
+													</Button>
+												</Link>
+											</TableCell>
+											<TableCell>
+												<Button
+													variant="contained"
+													onClick={() => deleteHandler(user._id)}>
+													<DeleteForeverTwoToneIcon />
+												</Button>
+											</TableCell>
+										</TableRow>
+									))}
+							</TableBody>
+						</Table>
+					</TableContainer>
+				</Grid>
+			</Box>
+		</>
 	);
 }
 
-export default dynamic(() => Promise.resolve(OrderHistoryScreen), {
+export default dynamic(() => Promise.resolve(UserListScreen), {
 	ssr: false,
 });

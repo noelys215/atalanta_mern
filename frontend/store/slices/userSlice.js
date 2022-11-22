@@ -6,6 +6,7 @@ import { getUserProfile } from '../actions/getUserProfile';
 import { updateUserProfile } from '../actions/updateUserProfile';
 import { getUserList } from '../actions/getUserList';
 import { deleteUser } from '../actions/deleteUser';
+import { updateUser } from '../actions/updateUser';
 
 const initialState = {
 	cart: {
@@ -26,6 +27,7 @@ export const userSlice = createSlice({
 	name: 'userInfo',
 	initialState,
 	reducers: {
+		reset: () => initialState,
 		logoutUser: (state) => {
 			Cookies.remove('userInfo');
 			Cookies.remove('cartItems');
@@ -81,9 +83,20 @@ export const userSlice = createSlice({
 		},
 		[updateUserProfile.fulfilled]: (state, { payload }) => {
 			state.loading = false;
-			state.userInfo = payload;
+			state.users = payload;
 		},
 		[updateUserProfile.rejected]: (state, { payload }) => {
+			state.loading = false;
+		},
+		// Admin Update User Reducer ...
+		[updateUser.pending]: (state) => {
+			state.loading = true;
+		},
+		[updateUser.fulfilled]: (state, { payload }) => {
+			state.loading = false;
+			state.success = true;
+		},
+		[updateUser.rejected]: (state, { payload }) => {
 			state.loading = false;
 		},
 		// Delete User Reducer ...
@@ -111,6 +124,6 @@ export const userSlice = createSlice({
 	},
 });
 
-export const { logoutUser } = userSlice.actions;
+export const { logoutUser, reset } = userSlice.actions;
 
 export default userSlice.reducer;
