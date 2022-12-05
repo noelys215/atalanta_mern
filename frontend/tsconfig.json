@@ -22,7 +22,8 @@
 		"**/*.tsx",
 		"sanity/schemas/product.js",
 		"sanity/schemas/schema.js",
-		"store/actions/loginAction.ts"
+		"store/actions/loginAction.ts",
+		"0DUMMY/dummy.js"
 	],
 	"exclude": ["node_modules"]
 }

@@ -13,6 +13,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import Link from '../src/Link';
 import PersonOutlineTwoToneIcon from '@mui/icons-material/PersonOutlineTwoTone';
 import Inventory2TwoToneIcon from '@mui/icons-material/Inventory2TwoTone';
+import InventoryTwoToneIcon from '@mui/icons-material/InventoryTwoTone';
 import ManageAccountsTwoToneIcon from '@mui/icons-material/ManageAccountsTwoTone';
 import SettingsTwoToneIcon from '@mui/icons-material/SettingsTwoTone';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
@@ -313,6 +314,20 @@ const AccountDrawer = () => {
 											sx={{ verticalAlign: 'middle', fontSize: 'inherit' }}
 										/>{' '}
 										User List
+									</Typography>
+								</Link>
+							)}
+
+							{userInfo.isAdmin && (
+								<Link
+									underline="hover"
+									href={'/admin/product-list'}
+									onClick={() => setOpenDrawer(false)}>
+									<Typography variant="h6" gutterBottom>
+										<InventoryTwoToneIcon
+											sx={{ verticalAlign: 'middle', fontSize: 'inherit' }}
+										/>{' '}
+										Product Management
 									</Typography>
 								</Link>
 							)}

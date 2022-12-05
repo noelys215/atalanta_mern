@@ -87,7 +87,7 @@ function UserEditScreen() {
 			toast(getError(err));
 		}
 	};
-	console.log(userInfo);
+
 	return (
 		<>
 			{!userId && <CircularProgress />}
