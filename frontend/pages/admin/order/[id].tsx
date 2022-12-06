@@ -1,4 +1,4 @@
-import { CircularProgress, Divider, Grid, List, ListItem, Typography } from '@mui/material';
+import { Button, CircularProgress, Divider, Grid, List, ListItem, Typography } from '@mui/material';
 import { Box } from '@mui/system';
 import axios from 'axios';
 import dynamic from 'next/dynamic';
@@ -6,28 +6,32 @@ import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
-import { getError } from '../../utils/error';
+import { getError } from '../../../utils/error';
 import { PayPalButton } from 'react-paypal-button-v2';
-import Layout from '../../components/Layout';
+import Layout from '../../../components/Layout';
 //Redux Toolkit
 import { useDispatch, useSelector } from 'react-redux';
-import { AppDispatch, RootState } from '../../store/store';
-import { getOrderDetails } from '../../store/actions/getOrderDetails';
-import { cartClear } from '../../store/slices/cartSlice';
-import { payOrder } from '../../store/actions/payOrder';
-import { payReset } from '../../store/slices/orderPaySlice';
-import { reset } from '../../store/slices/orderSlice';
+import { AppDispatch, RootState } from '../../../store/store';
+import { getOrderDetails } from '../../../store/actions/getOrderDetails';
+import { cartClear } from '../../../store/slices/cartSlice';
+import { payOrder } from '../../../store/actions/payOrder';
+import { payReset } from '../../../store/slices/orderPaySlice';
+import { updateToShipped } from '../../../store/actions/updateToShipped';
+import { shipReset } from '../../../store/slices/orderShipSlice';
+import { reset } from '../../../store/slices/orderSlice';
 
 const OrderDetails = ({ params }: any) => {
 	const router = useRouter();
-	const [sdkReady, setSdkReady] = useState(false);
 	// Toolkit
 	const dispatch = useDispatch<AppDispatch>();
 	const { userInfo } = useSelector((state: RootState) => state.userInfo);
 	const { order, loading, error }: any = useSelector((state: RootState) => state.order);
-	const { loading: loadingPay, success: successPay }: any = useSelector(
-		(state: RootState) => state.orderPay
-	);
+
+	const {
+		success: shipSuccess,
+		loading: shipLoading,
+		error: shipError,
+	}: any = useSelector((state: RootState) => state.orderShip);
 
 	const { id: orderId } = params;
 	//
@@ -35,28 +39,13 @@ const OrderDetails = ({ params }: any) => {
 		if (loading || !order) {
 			dispatch(getOrderDetails(orderId));
 		}
-		// PayPal
-		const addPayPalScript = async () => {
-			const { data: clientId } = await axios.get('http://127.0.0.1:5000/api/config/paypal');
-			const script = document.createElement('script');
-			script.type = 'text/javascript';
-			script.src = `https://www.paypal.com/sdk/js?client-id=${clientId}`;
-			script.async = true;
-			script.onload = () => setSdkReady(true);
-			document.body.appendChild(script);
-		};
 
-		if (successPay || !order || order._id !== orderId) {
+		if (shipSuccess || !order || order._id !== orderId) {
 			dispatch(payReset({}));
+			dispatch(shipReset());
 			dispatch(getOrderDetails(orderId));
-		} else if (!order.isPaid) {
-			if (!window.paypal) {
-				addPayPalScript();
-			} else {
-				setSdkReady(true);
-			}
 		}
-	}, [dispatch, orderId, successPay, order]);
+	}, [dispatch, orderId, order, shipSuccess]);
 
 	const {
 		shippingAddress,
@@ -69,18 +58,15 @@ const OrderDetails = ({ params }: any) => {
 		isPaid,
 		paidAt,
 		isDelivered,
+		isShipped,
+		shippedAt,
 		deliveredAt,
 	} = order;
 
-	console.log(order);
-
-	const successPaymentHandler = (paymentResult: any) => {
-		dispatch(payOrder({ orderId: orderId, paymentResult }));
-		dispatch(cartClear({}));
-		dispatch(reset());
+	const shipHandler = () => {
+		dispatch(updateToShipped(order));
+		toast(`Order: ${orderId} Shipped`);
 	};
-
-	const onError = (err: any) => toast(getError(err));
 
 	return (
 		<>
@@ -137,9 +123,13 @@ const OrderDetails = ({ params }: any) => {
 									<Typography sx={{ mt: 4 }}>Payment Method</Typography>
 									<Divider sx={{ mb: 2, justifySelf: 'center' }} />
 									<List>
-										<ListItem>{paymentMethod}</ListItem>
+										<ListItem>Payment Method: {paymentMethod}</ListItem>
 										<ListItem>
-											Status: {isPaid ? `paid at ${paidAt}` : 'not paid'}
+											Status: {isPaid ? `Paid on ${paidAt}` : 'not paid'}
+										</ListItem>
+										<ListItem>
+											Status:{' '}
+											{isShipped ? `Shipped on ${shippedAt}` : 'Not Shipped'}
 										</ListItem>
 									</List>
 								</Grid>
@@ -253,21 +243,39 @@ const OrderDetails = ({ params }: any) => {
 											</List>
 										</Grid>
 
-										{/* Paypal */}
-										{!isPaid && (
-											<Grid item md={5} sm={12} xs={12}>
-												{loadingPay && <CircularProgress />}
-												{!sdkReady ? (
-													<CircularProgress />
-												) : (
-													<Box width={'100%'} mt={0}>
-														<PayPalButton
-															amount={totalPrice}
-															onSuccess={successPaymentHandler}
-															onError={onError}
-														/>
-													</Box>
-												)}
+										{/* Admin Buttons */}
+										{userInfo.isAdmin && order.isPaid && (
+											<Grid
+												item
+												md={5}
+												sm={12}
+												xs={12}
+												mt={'auto'}
+												mb={'auto'}>
+												{shipLoading && <CircularProgress />}
+												<Box width={'auto'}>
+													<Button
+														disabled={order.isShipped}
+														onClick={shipHandler}
+														variant="contained"
+														sx={{
+															backgroundColor: 'rgb(68, 68, 68)',
+															height: '50px',
+															mr: 1,
+														}}>
+														Mark Shipped
+													</Button>
+													<Button
+														disabled={true}
+														// disabled={order.isDelivered}
+														variant="contained"
+														sx={{
+															backgroundColor: 'rgb(68, 68, 68)',
+															height: '50px',
+														}}>
+														Mark Delivered
+													</Button>
+												</Box>
 											</Grid>
 										)}
 									</Grid>

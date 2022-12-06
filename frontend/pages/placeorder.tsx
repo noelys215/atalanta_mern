@@ -22,8 +22,11 @@ const PlaceOrderScreen = () => {
 	//
 	const dispatch = useDispatch<AppDispatch>();
 	const { order }: any = useSelector((state: RootState) => state.order);
+	const { userInfo }: any = useSelector((state: RootState) => state.userInfo);
+	console.log(userInfo);
 
 	const { cartItems, shippingAddress } = useSelector((state: RootState) => state.payment.cart);
+	console.log(order);
 
 	const paymentMethod = Cookies.get('paymentMethod');
 
@@ -37,9 +40,10 @@ const PlaceOrderScreen = () => {
 	const totalPrice = +(itemsPrice + shippingPrice + taxPrice).toFixed(2);
 
 	useEffect(() => {
-		// if (!cartItems) {
-		// 	setLoading(true);
-		// }
+		if (cartItems.length === 0) {
+			setLoading(true);
+			router.reload();
+		}
 		if (!paymentMethod) {
 			router.push('/payment');
 		}
@@ -52,7 +56,6 @@ const PlaceOrderScreen = () => {
 		try {
 			// setLoading(true);
 			// setLoading(true);
-
 			await dispatch(
 				createOrder({
 					orderItems: cartItems,
@@ -62,12 +65,12 @@ const PlaceOrderScreen = () => {
 					shippingPrice,
 					taxPrice,
 					totalPrice,
+					user: userInfo,
 				})
 			)
 				.then((res) => router.push(`/order/${res.payload._id}`))
 				.then(() => console.log(order))
 				.then(() => setLoading(false));
-			// .then(() => dispatch(cartClear({})));
 		} catch (error) {
 			setLoading(false);
 			toast(getError(error));

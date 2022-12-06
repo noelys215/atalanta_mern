@@ -6,6 +6,8 @@ import paymentReducer from './slices/paymentSlice';
 import orderReducer from './slices/orderSlice';
 import orderPayReducer from './slices/orderPaySlice';
 import orderHistoryReducer from './slices/orderHistorySlice';
+import adminOrderHistoryReducer from './slices/adminOrdersSlice';
+import orderShipReducer from './slices/orderShipSlice';
 
 export const store = configureStore({
 	reducer: {
@@ -16,6 +18,8 @@ export const store = configureStore({
 		order: orderReducer,
 		orderPay: orderPayReducer,
 		orderHistory: orderHistoryReducer,
+		adminOrderHistory: adminOrderHistoryReducer,
+		orderShip: orderShipReducer,
 	},
 	devTools: true,
 });

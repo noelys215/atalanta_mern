@@ -3,18 +3,19 @@ import Image from 'next/image';
 import logo from '../public/assets/logo-plain.png';
 import ShoppingBagTwoToneIcon from '@mui/icons-material/ShoppingBagTwoTone';
 import Link from '../src/Link';
-import { useContext, useState } from 'react';
+import { useState } from 'react';
 import MobileSearch from './MobileSearch';
 import AccountDrawer from './AccountDrawer';
 import { Store } from '../utils/store';
 import SearchBar from './SearchBar';
 import SearchIcon from '@mui/icons-material/Search';
+import { useSelector } from 'react-redux';
+import { RootState } from '../store/store';
 
 const TopBar = () => {
 	const [openSearch, setOpenSearch] = useState<boolean>(false);
 
-	const { state } = useContext(Store);
-	const { cart } = state;
+	const { cart } = useSelector((state: RootState) => state.cart);
 
 	return (
 		<Container

@@ -21,7 +21,8 @@ const addOrderItems = asyncHandler(async (req, res) => {
 	} else {
 		const order = new Order({
 			orderItems,
-			user: req.user._id,
+			user: req.user,
+			// user: req.user._id,
 			taxPrice,
 			shippingAddress,
 			paymentMethod,
@@ -42,7 +43,7 @@ const getOrderById = asyncHandler(async (req, res) => {
 	const order = await Order.findById(req.params.id).populate({
 		path: 'user',
 		model: 'User',
-		select: 'name email',
+		select: 'firstName lastName email',
 	});
 
 	if (order) {
@@ -77,7 +78,25 @@ const updateOrderToPaid = asyncHandler(async (req, res) => {
 	}
 });
 
-/*  @desc		Get User Oder */
+/*  @desc		Update to Shipped */
+/*  @route	GET /api/orders/:id/ship */
+/*  @access	Private */
+const updateOrderToShipped = asyncHandler(async (req, res) => {
+	const order = await Order.findById(req.params.id);
+
+	if (order) {
+		order.isShipped = true;
+		order.shippedAt = Date.now();
+
+		const updatedOrder = await order.save();
+		res.json(updatedOrder);
+	} else {
+		res.status(404);
+		throw new Error('Order Not Found');
+	}
+});
+
+/*  @desc		Get User Order */
 /*  @route	GET /api/orders/myorders */
 /*  @access	Private */
 const getMyOrders = asyncHandler(async (req, res) => {
@@ -85,4 +104,19 @@ const getMyOrders = asyncHandler(async (req, res) => {
 	res.json(orders);
 });
 
-module.exports = { addOrderItems, getOrderById, updateOrderToPaid, getMyOrders };
+/*  @desc		Get All Orders */
+/*  @route	GET /api/orders/orders */
+/*  @access	Private/Admin */
+const getOrders = asyncHandler(async (req, res) => {
+	const orders = await Order.find({}).populate('user', 'id firstName lastName');
+	res.json(orders);
+});
+
+module.exports = {
+	addOrderItems,
+	getOrderById,
+	updateOrderToPaid,
+	getMyOrders,
+	getOrders,
+	updateOrderToShipped,
+};

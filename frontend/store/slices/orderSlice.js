@@ -5,21 +5,22 @@ import { getOrderDetails } from '../actions/getOrderDetails';
 
 const initialState = {
 	loading: false,
-	order: Cookies.get('orders') || {},
+	order: {},
 	error: '',
 	success: false,
 };
 export const orderSlice = createSlice({
 	name: 'order',
 	initialState,
+	reducers: {
+		reset: () => initialState,
+	},
 	extraReducers: {
 		// Create order reducer ...
 		[createOrder.pending]: (state) => {
-			console.log('Order Pending');
 			state.loading = true;
 		},
 		[createOrder.fulfilled]: (state, { payload }) => {
-			console.log('Order Fulfilled');
 			state.order = payload;
 			state.loading = false;
 		},
@@ -30,11 +31,9 @@ export const orderSlice = createSlice({
 		},
 		// Get order details reducer ...
 		[getOrderDetails.pending]: (state) => {
-			console.log('Get Order Pending');
 			state.loading = true;
 		},
 		[getOrderDetails.fulfilled]: (state, { payload }) => {
-			console.log('Get Order Fulfilled');
 			state.order = payload;
 			state.loading = false;
 		},
@@ -45,5 +44,7 @@ export const orderSlice = createSlice({
 		},
 	},
 });
+
+export const { reset } = orderSlice.actions;
 
 export default orderSlice.reducer;

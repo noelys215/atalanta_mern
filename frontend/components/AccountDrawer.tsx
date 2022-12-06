@@ -292,17 +292,31 @@ const AccountDrawer = () => {
 								</Typography>
 							</Link>
 
-							<Link
-								underline="hover"
-								href={'/order-history'}
-								onClick={() => setOpenDrawer(false)}>
-								<Typography variant="h6" gutterBottom>
-									<Inventory2TwoToneIcon
-										sx={{ verticalAlign: 'middle', fontSize: 'inherit' }}
-									/>{' '}
-									Order History
-								</Typography>
-							</Link>
+							{userInfo.isAdmin ? (
+								<Link
+									underline="hover"
+									href={'/admin/orders'}
+									onClick={() => setOpenDrawer(false)}>
+									<Typography variant="h6" gutterBottom>
+										<Inventory2TwoToneIcon
+											sx={{ verticalAlign: 'middle', fontSize: 'inherit' }}
+										/>{' '}
+										Order List
+									</Typography>
+								</Link>
+							) : (
+								<Link
+									underline="hover"
+									href={'/order-history'}
+									onClick={() => setOpenDrawer(false)}>
+									<Typography variant="h6" gutterBottom>
+										<Inventory2TwoToneIcon
+											sx={{ verticalAlign: 'middle', fontSize: 'inherit' }}
+										/>{' '}
+										Order History
+									</Typography>
+								</Link>
+							)}
 
 							{userInfo.isAdmin && (
 								<Link

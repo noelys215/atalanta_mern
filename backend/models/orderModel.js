@@ -70,6 +70,14 @@ const orderSchema = mongoose.Schema(
 			required: true,
 			default: false,
 		},
+		shippedAt: {
+			type: Date,
+		},
+		isShipped: {
+			type: Boolean,
+			required: true,
+			default: false,
+		},
 	},
 	{
 		timestamps: true,
