@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import {
+	Backdrop,
 	Box,
 	Card,
 	CardActionArea,
 	CardContent,
 	CardMedia,
+	CircularProgress,
 	Divider,
 	Grid,
 	Typography,
@@ -22,6 +24,7 @@ interface ProductCatProps {
 }
 
 const ProductsCat: React.FC<ProductCatProps> = ({ products, title, type, cat, department }) => {
+	const [loading, setLoading] = useState(false);
 	const [state, setState] = useState<ProductCatProps>({
 		sort: '',
 	});
@@ -34,6 +37,13 @@ const ProductsCat: React.FC<ProductCatProps> = ({ products, title, type, cat, de
 	const typed: string = type;
 	return (
 		<>
+			{loading && (
+				<Backdrop
+					sx={{ color: '#fff', opacity: 0.2, zIndex: (theme) => theme.zIndex.drawer + 1 }}
+					open={loading}>
+					<CircularProgress color="inherit" />
+				</Backdrop>
+			)}
 			<Box
 				sx={{
 					backgroundColor: '#fff',
@@ -74,7 +84,7 @@ const ProductsCat: React.FC<ProductCatProps> = ({ products, title, type, cat, de
 								}}
 								key={product?.slug}>
 								<Grid item md={2.5} sm={5} lg={2.5}>
-									<Card sx={{ width: '100%' }}>
+									<Card sx={{ width: '100%' }} onClick={() => setLoading(true)}>
 										<CardActionArea>
 											<CardMedia
 												component="img"
