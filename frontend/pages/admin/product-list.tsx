@@ -74,7 +74,7 @@ function ProductListScreen() {
 				maxWidth="lg"
 				sx={{
 					// p: 1,
-					minHeight: '62.5rem',
+					// minHeight: '62.5rem',
 					width: '100%',
 					m: 'auto',
 					mt: 10,

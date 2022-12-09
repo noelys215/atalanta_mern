@@ -23,7 +23,7 @@ interface ProductCatProps {
 	sort?: any;
 }
 
-const ProductsCat: React.FC<ProductCatProps> = ({ products, title, type, cat, department }) => {
+const ProductsCat: React.FC<ProductCatProps> = ({ products, title, cat }) => {
 	const [loading, setLoading] = useState(false);
 	const [state, setState] = useState<ProductCatProps>({
 		sort: '',
@@ -34,7 +34,7 @@ const ProductsCat: React.FC<ProductCatProps> = ({ products, title, type, cat, de
 	};
 
 	const { sort } = state;
-	const typed: string = type;
+
 	return (
 		<>
 			{loading && (
@@ -79,8 +79,7 @@ const ProductsCat: React.FC<ProductCatProps> = ({ products, title, type, cat, de
 							<Link
 								passHref
 								href={{
-									pathname: `/${department}/${cat}/${product?.slug}`,
-									query: { type: typed },
+									pathname: `/${product?.department}/${cat}/${product?.slug}`,
 								}}
 								key={product?.slug}>
 								<Grid item md={2.5} sm={5} lg={2.5}>
@@ -100,6 +99,7 @@ const ProductsCat: React.FC<ProductCatProps> = ({ products, title, type, cat, de
 												},
 											}}>
 											<Typography variant="h6">{product.name}</Typography>
+
 											<Typography variant="body1">{`$${product?.price.toFixed(
 												2
 											)}`}</Typography>

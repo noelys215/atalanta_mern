@@ -25,15 +25,17 @@ export async function getStaticProps({ params }: any) {
 	};
 }
 
+// This function gets called at build time on server-side.
+// It may be called again, on a serverless function, if
+// the path has not been generated.
 export async function getStaticPaths() {
 	const { data } = await axios.get(`http://127.0.0.1:5000/api/products`);
 
-	const res = data.filter(
-		(prod: any) => prod.category === 'all' && prod.department === 'accessories'
-	);
-
-	const paths = res.map((prod: any) => ({
+	// Get the paths we want to pre-render based on products
+	const paths = data.map((prod: any) => ({
 		params: { slug: prod.slug },
 	}));
+
+	// We'll pre-render only these paths at build time.
 	return { paths, fallback: true };
 }

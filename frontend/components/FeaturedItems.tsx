@@ -1,10 +1,9 @@
-import { Box, CircularProgress, Container, Grid, Typography } from '@mui/material';
+import { Backdrop, Box, CircularProgress, Container, Grid, Typography } from '@mui/material';
+import axios from 'axios';
 import Image from 'next/image';
 import Link from 'next/link';
-import React, { ReactElement, useEffect, useState } from 'react';
+import { ReactElement, useEffect, useState } from 'react';
 import sideImage from '../public/assets/joggingwoman.jpg';
-import client from '../utils/client';
-import { urlForThumbnail } from '../utils/image';
 // Framer
 
 interface ProductProps {
@@ -25,10 +24,11 @@ export const FeaturedItems = (): ReactElement<ProductProps> => {
 
 	useEffect(() => {
 		const fetchData = async () => {
+			const { data } = await axios.get(`http://127.0.0.1:5000/api/products`);
 			try {
-				const tanks = await client
-					.fetch(`*[_type == "WomensTops"]`)
-					.then((product) => product.map((product: any) => product));
+				const tanks = await data.filter(
+					(prod: any) => prod.category === 'tanks' && prod.department === 'woman'
+				);
 
 				setState({ tanks, loading: false });
 			} catch (err: any) {
@@ -42,15 +42,15 @@ export const FeaturedItems = (): ReactElement<ProductProps> => {
 		<>
 			{loading ? (
 				<Container maxWidth="xl">
-					<Box
+					<Backdrop
 						sx={{
-							display: 'flex',
-							justifyContent: 'center',
-							alignItems: 'center',
-							width: '100%',
-						}}>
-						<CircularProgress />
-					</Box>
+							color: '#fff',
+							opacity: 0.2,
+							zIndex: (theme) => theme.zIndex.drawer + 1,
+						}}
+						open={loading}>
+						<CircularProgress color="inherit" />
+					</Backdrop>
 				</Container>
 			) : (
 				<>
@@ -99,14 +99,15 @@ export const FeaturedItems = (): ReactElement<ProductProps> => {
 						<Grid container gap={8} justifyContent="center" width={'auto'}>
 							{tanks?.slice(0, 4).map((p: any) => (
 								<Grid item md={5} xs={4} key={p?._id}>
-									<Link href={`/womens/tops/${p?.slug?.current}?type=WomensTops`}>
+									<Link href={`/woman/tops/${p?.slug}`}>
 										<a>
-											{/* <Image
-												src={urlForThumbnail(p?.image[0])}
+											<Image
+												onClick={() => setState({ loading: true })}
+												src={p?.image[0]}
 												width={450}
 												height={450}
 												alt={p?.name}
-											/> */}
+											/>
 										</a>
 									</Link>
 									<Box p={1}>

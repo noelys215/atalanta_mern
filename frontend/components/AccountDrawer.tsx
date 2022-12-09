@@ -8,7 +8,7 @@ import {
 	Typography,
 } from '@mui/material';
 import { Box } from '@mui/system';
-import React, { useContext, useState } from 'react';
+import React, { useState } from 'react';
 import CloseIcon from '@mui/icons-material/Close';
 import Link from '../src/Link';
 import PersonOutlineTwoToneIcon from '@mui/icons-material/PersonOutlineTwoTone';
@@ -26,6 +26,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../store/store';
 import { loginUser } from '../store/actions/loginAction';
 import { logoutUser } from '../store/slices/userSlice';
+import { reset } from '../store/slices/userSlice';
+import { cartClear } from '../store/slices/cartSlice';
 
 interface AccountProps {
 	email?: string[];
@@ -91,6 +93,8 @@ const AccountDrawer = () => {
 	const signOutHandler = () => {
 		dispatch(logoutUser({}));
 		setOpenDrawer(false);
+		reset({});
+		cartClear({});
 		if (router.asPath !== '/') {
 			router.push('/');
 		}

@@ -1,6 +1,5 @@
 import Cookies from 'js-cookie';
-import { createSlice, current } from '@reduxjs/toolkit';
-import { createOrder } from '../actions/createOrder';
+import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
 	cart: {

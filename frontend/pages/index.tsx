@@ -24,7 +24,7 @@ const Home: NextPage = () => {
 					desc={`Daffodils are blooming and the evenings are getting longer, after the seemingly never-ending winter, spring is finally here.
 				`}
 					linkTitle={'Discover the 2022 Womens Spring Collection'}
-					linkToSeasonal={'/womens/tops/tops'}
+					linkToSeasonal={'/woman/tops/tops'}
 					imgSrc={'/assets/nobullrunning.webp'}
 				/>
 			</motion.div>
@@ -46,7 +46,7 @@ const Home: NextPage = () => {
 					quote={'The tans will fade, but the memories wil last forever'}
 					desc={`You can't change a 90-degree day, 100 percent humidity, or the dread of logging miles in both. But you can outfit yourself in whisper-weight, sweat-wicking apparel that helps make summer runs feel like the good kind of hot.`}
 					linkTitle={'Shop the heat 🔥'}
-					linkToSeasonal={'/mens/tops/tops'}
+					linkToSeasonal={'/man/tops/tops'}
 					imgSrc={'/assets/mantyingshoe.jpg'}
 				/>
 			</motion.div>

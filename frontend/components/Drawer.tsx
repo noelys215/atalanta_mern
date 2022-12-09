@@ -61,21 +61,21 @@ const MuiDrawer = () => {
 							expandIcon={<AddIcon />}
 							aria-controls="panel1a-content"
 							id="panel1a-header">
-							<Typography textAlign={'center'}>Men</Typography>
+							<Typography textAlign={'center'}>MAN</Typography>
 						</AccordionSummary>
 
 						<AccordionDetails>
 							<List>
 								<ListItem onClick={() => setOpenDrawer(false)}>
-									<Link href={'/mens/tops/tops'}>Tops</Link>
+									<Link href={'/man/tops/tops'}>Tops</Link>
 								</ListItem>
 
 								<ListItem onClick={() => setOpenDrawer(false)}>
-									<Link href={'/mens/bottoms/bottoms'}>Bottoms</Link>
+									<Link href={'/man/bottoms/bottoms'}>Bottoms</Link>
 								</ListItem>
 
 								<ListItem onClick={() => setOpenDrawer(false)}>
-									<Link href={'/mens/footwear/footwear'}>Footwear</Link>
+									<Link href={'/man/footwear/footwear'}>Footwear</Link>
 								</ListItem>
 							</List>
 						</AccordionDetails>
@@ -86,21 +86,21 @@ const MuiDrawer = () => {
 							expandIcon={<AddIcon />}
 							aria-controls="panel1a-content"
 							id="panel1a-header">
-							<Typography textAlign={'center'}>Women</Typography>
+							<Typography textAlign={'center'}>WOMAN</Typography>
 						</AccordionSummary>
 
 						<AccordionDetails>
 							<List onClick={() => setOpenDrawer(false)}>
 								<ListItem>
-									<Link href={'/womens/tops/tops'}>Tops</Link>
+									<Link href={'/woman/tops/tops'}>Tops</Link>
 								</ListItem>
 
 								<ListItem>
-									<Link href={'/womens/bottoms/bottoms'}>Bottoms</Link>
+									<Link href={'/woman/bottoms/bottoms'}>Bottoms</Link>
 								</ListItem>
 
 								<ListItem>
-									<Link href={'/womens/footwear/footwear'}>Footwear</Link>
+									<Link href={'/woman/footwear/footwear'}>Footwear</Link>
 								</ListItem>
 							</List>
 						</AccordionDetails>
@@ -111,7 +111,7 @@ const MuiDrawer = () => {
 							expandIcon={<AddIcon />}
 							aria-controls="panel1a-content"
 							id="panel1a-header">
-							<Typography textAlign={'center'}>Accessories</Typography>
+							<Typography textAlign={'center'}>ACCESSORIES</Typography>
 						</AccordionSummary>
 
 						<AccordionDetails>

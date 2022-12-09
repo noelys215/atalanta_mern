@@ -12,16 +12,16 @@ import {
 	Typography,
 } from '@mui/material';
 import { Box } from '@mui/system';
+import axios from 'axios';
 import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
-import client from '../utils/client';
-import { urlForThumbnail } from '../utils/image';
 
 export default function SearchScreen() {
 	const router = useRouter();
-	const { query = 'all' } = router.query;
+	const { query = 'all' }: any = router.query;
+
 	const [state, setState]: any = useState({
 		categories: [],
 		products: [],
@@ -33,9 +33,15 @@ export default function SearchScreen() {
 	useEffect(() => {
 		const fetchData = async () => {
 			try {
-				let gQuery = `*[brand match "${query}" || color match "${query}" || category match "${query}" || name match "${query}"] `;
 				setState({ loading: true });
-				const products = await client.fetch(gQuery);
+				const { data } = await axios.get(`http://127.0.0.1:5000/api/products`);
+				const products = data.filter(
+					(prod: any) =>
+						prod.category.toLowerCase() === query.toLowerCase() ||
+						prod.department.toLowerCase() === query.toLowerCase() ||
+						prod.brand.toLowerCase() === query.toLowerCase() ||
+						prod.name.toLowerCase() === query.toLowerCase()
+				);
 				setState({ products, loading: false });
 			} catch (err: any) {
 				setState({ error: err.message, loading: false });
@@ -78,10 +84,17 @@ export default function SearchScreen() {
 								<Link
 									passHref
 									href={{
-										pathname: `/${product?.gender?.toLowerCase()}/${product?.category.toLowerCase()}/${
-											product?.slug.current
-										}`,
-										query: { type: product._type },
+										pathname: `/${product?.department?.toLowerCase()}/${
+											product?.category === 'shirts' ||
+											product?.category === 'tanks' ||
+											product?.category === 'jackets'
+												? 'tops'
+												: product?.category === 'shorts' ||
+												  product?.category === 'pants'
+												? 'bottoms'
+												: 'all'
+										}/${product?.slug}`,
+										// query: { type: product._type },
 									}}
 									key={product?._id}>
 									<Grid item md={2.5} sm={5} lg={2}>
@@ -89,10 +102,11 @@ export default function SearchScreen() {
 											<CardActionArea>
 												<CardMedia
 													component="img"
-													image={urlForThumbnail(product.image[0])}
+													image={product.image[0]}
 													title={product.name}
 												/>
 											</CardActionArea>
+
 											<CardContent
 												sx={{
 													height: {

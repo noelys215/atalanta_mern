@@ -1,7 +1,7 @@
 import React from 'react';
 import { Box, Container, Divider, Typography } from '@mui/material';
 import ProductsCat from '../../../components/ProductsCat';
-import client from '../../../utils/client';
+import axios from 'axios';
 
 interface ProductProps {
 	accessories?: string[];
@@ -14,7 +14,6 @@ interface ProductProps {
 const Accessories: React.FC<ProductProps> = ({ accessories }) => {
 	return (
 		<>
-			(
 			<Container maxWidth="xl" sx={{ mb: 'auto' }}>
 				{/* Title */}
 
@@ -35,7 +34,6 @@ const Accessories: React.FC<ProductProps> = ({ accessories }) => {
 					cat={'all'}
 				/>
 			</Container>
-			)
 		</>
 	);
 };
@@ -43,7 +41,11 @@ const Accessories: React.FC<ProductProps> = ({ accessories }) => {
 export default Accessories;
 
 export async function getStaticProps() {
-	const accessories = await client.fetch(`*[_type == "accessories"]`);
+	const { data } = await axios.get(`http://127.0.0.1:5000/api/products`);
+
+	const accessories = data.filter(
+		(prod: any) => prod.category === 'all' && prod.department === 'accessories'
+	);
 
 	return {
 		props: {

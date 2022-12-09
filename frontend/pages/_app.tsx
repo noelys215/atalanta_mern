@@ -11,7 +11,6 @@ import TopBar from '../components/TopBar';
 import Copyright from '../components/Copyright';
 import '../styles/globals.css';
 import { Box } from '@mui/material';
-import { StoreProvider } from '../utils/store';
 import { Toaster } from 'react-hot-toast';
 import { PayPalScriptProvider } from '@paypal/react-paypal-js';
 // Redux
@@ -56,25 +55,23 @@ export default function MyApp(props: MyAppProps) {
 					<ThemeProvider theme={theme}>
 						{/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
 						<CssBaseline />
-						<StoreProvider>
-							<Provider store={store}>
-								<Toaster
-									position="bottom-center"
-									gutter={8}
-									toastOptions={{
-										duration: 5000,
-										style: {
-											background: '#363636',
-											color: '#fff',
-										},
-									}}
-								/>
-								<TopBar />
-								<PayPalScriptProvider deferLoading={true}>
-									<Component {...pageProps} />
-								</PayPalScriptProvider>
-							</Provider>
-						</StoreProvider>
+						<Provider store={store}>
+							<Toaster
+								position="bottom-center"
+								gutter={8}
+								toastOptions={{
+									duration: 5000,
+									style: {
+										background: '#363636',
+										color: '#fff',
+									},
+								}}
+							/>
+							<TopBar />
+							<PayPalScriptProvider deferLoading={true}>
+								<Component {...pageProps} />
+							</PayPalScriptProvider>
+						</Provider>
 						<Copyright />
 					</ThemeProvider>
 				</Box>
