@@ -25,4 +25,4 @@ jobs:
                   CLOUDINARY_CLOUD_NAME: ${{secrets.CLOUDINARY_CLOUD_NAME}}
                   CLOUDINARY_KEY: ${{secrets.CLOUDINARY_KEY}}
                   CLOUDINARY_SECRET: ${{secrets.CLOUDINARY_SECRET}}
-            - run: npm run build --prefix frontend
+            - run: cp .env && npm run build --prefix frontend
