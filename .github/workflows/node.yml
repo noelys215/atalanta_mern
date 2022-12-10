@@ -16,3 +16,13 @@ jobs:
             - run: npm install
             - run: npm install --prefix frontend
             - run: npm run build --prefix frontend
+              env:
+                  MONGODB_URI: ${{secrets.MONGODB_URI}}
+                  PORT: ${{secrets.PORT}}
+                  JWT_SECRET: ${{secrets.JWT_SECRET}}
+                  PAYPAL_CLIENT_ID: ${{secrets.PAYPAL_CLIENT_ID}}
+                  RECAPTCHA_SITE_KEY: ${{secrets.RECAPTCHA_SITE_KEY}}
+                  RECAPTCHA_SECRET_KEY: ${{secrets.RECAPTCHA_SECRET_KEY}}
+                  CLOUDINARY_CLOUD_NAME: ${{secrets.CLOUDINARY_CLOUD_NAME}}
+                  CLOUDINARY_KEY: ${{secrets.CLOUDINARY_KEY}}
+                  CLOUDINARY_SECRET: ${{secrets.CLOUDINARY_SECRET}}
