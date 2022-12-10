@@ -7,6 +7,7 @@ on:
 jobs:
     build:
         runs-on: ubuntu-latest
+        environment: DEV
         env:
             MONGODB_URI: ${{secrets.MONGODB_URI}}
             PORT: ${{secrets.PORT}}
