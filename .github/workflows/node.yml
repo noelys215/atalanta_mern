@@ -19,7 +19,8 @@ jobs:
             - run: npm install --prefix frontend
               env:
                   MONGODB_URI: ${{secrets.MONGODB_URI}}
-                  PORT: ${{secrets.PORT}}
+                  PORT: 5000
+                  #   PORT: ${{secrets.PORT}}
                   JWT_SECRET: ${{secrets.JWT_SECRET}}
                   PAYPAL_CLIENT_ID: ${{secrets.PAYPAL_CLIENT_ID}}
                   RECAPTCHA_SITE_KEY: ${{secrets.RECAPTCHA_SITE_KEY}}
