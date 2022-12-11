@@ -17,7 +17,6 @@ jobs:
             - run: npm install
             - run: npm install --prefix backend
             - run: npm install --prefix frontend
-            - run: npm run start --prefix backend
               env:
                   MONGODB_URI: ${{secrets.MONGODB_URI}}
                   PORT: ${{secrets.PORT}}
