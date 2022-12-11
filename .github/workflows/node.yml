@@ -16,6 +16,7 @@ jobs:
                   node-version: '16'
             - run: npm install
             - run: npm install --prefix backend
+            - run: npm run start --prefix backend
             - run: npm install --prefix frontend
               env:
                   MONGODB_URI: ${{secrets.MONGODB_URI}}
