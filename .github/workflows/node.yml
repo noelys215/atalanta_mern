@@ -14,12 +14,12 @@ jobs:
               uses: actions/setup-node@v2
               with:
                   node-version: '16'
-            - run: npm install
-            - run: npm install --prefix backend
-            - run: npm run start --prefix backend
+            - run: npm ci
+            - run: npm ci --prefix backend
+            - run: npm start & npx wait-on http://localhost:5000 --prefix backend
               env:
                   MONGODB_URI: ${{secrets.MONGODB_URI}}nd
-            - run: npm install --prefix frontend
+            - run: npm ci --prefix frontend
               env:
                   MONGODB_URI: ${{secrets.MONGODB_URI}}
                   PORT: 5000
