@@ -13,12 +13,12 @@ jobs:
             - name: Use Node.js version 16
               uses: actions/setup-node@v2
               with:
-                  node-version: '16'
+                  node-version: 16.x
             - run: npm ci
             - run: npm ci --prefix backend
             - run: npm start & npx wait-on http://localhost:5000 --prefix backend
               env:
-                  MONGODB_URI: ${{secrets.MONGODB_URI}}nd
+                  MONGODB_URI: ${{secrets.MONGODB_URI}}
             - run: npm ci --prefix frontend
               env:
                   MONGODB_URI: ${{secrets.MONGODB_URI}}
