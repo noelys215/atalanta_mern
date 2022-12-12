@@ -8,7 +8,7 @@ jobs:
     build:
         env:
             CI: true
-            MONGO_URL: mongodb+srv://admin:Casa1992@cluster0.jiwerh0.mongodb.net/atalanta?retryWrites=true&w=majority
+            MONGO_URL: mongodb://localhost/nasa
             MONGODB_URI: ${{secrets.MONGODB_URI}}
             JWT_SECRET: ${{secrets.JWT_SECRET}}
             PAYPAL_CLIENT_ID: ${{secrets.PAYPAL_CLIENT_ID}}
@@ -19,8 +19,8 @@ jobs:
             CLOUDINARY_SECRET: ${{secrets.CLOUDINARY_SECRET}}
         strategy:
             matrix:
-                node-version: [14.x, 16.x]
-                mongodb-version: ['5.0', '6.0']
+                node-version: [16.x]
+                mongodb-version: ['4.2', '4.4', '5.0', '6.0']
         runs-on: ubuntu-latest
         environment: DEV
         steps:
@@ -35,6 +35,9 @@ jobs:
                   mongodb-version: ${{ matrix.mongodb-version }}
             - run: npm ci
             - run: npm ci --prefix backend
+            - run: npm start & npx wait-on http://localhost:27017 --prefix backend
+              env:
+                  MONGODB_URI: ${{secrets.MONGODB_URI}}
             - run: npm ci --prefix frontend
               env:
                   MONGODB_URI: ${{secrets.MONGODB_URI}}
