@@ -9,6 +9,7 @@ jobs:
         env:
             CI: true
             MONGO_URL: mongodb://localhost/nasa
+            API_URL: ${{secrets.API_URL}}
             MONGODB_URI: ${{secrets.MONGODB_URI}}
             JWT_SECRET: ${{secrets.JWT_SECRET}}
             PAYPAL_CLIENT_ID: ${{secrets.PAYPAL_CLIENT_ID}}
@@ -41,6 +42,7 @@ jobs:
             - run: npm ci --prefix frontend
               env:
                   MONGODB_URI: ${{secrets.MONGODB_URI}}
+                  API_URL: ${{secrets.API_URL}}
                   JWT_SECRET: ${{secrets.JWT_SECRET}}
                   PAYPAL_CLIENT_ID: ${{secrets.PAYPAL_CLIENT_ID}}
                   RECAPTCHA_SITE_KEY: ${{secrets.RECAPTCHA_SITE_KEY}}
