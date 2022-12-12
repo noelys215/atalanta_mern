@@ -8,7 +8,7 @@ jobs:
     build:
         env:
             CI: true
-            MONGO_URL: mongodb://localhost/atalanta
+            MONGO_URL: mongodb+srv://admin:Casa1992@cluster0.jiwerh0.mongodb.net/atalanta?retryWrites=true&w=majority
             MONGODB_URI: ${{secrets.MONGODB_URI}}
         strategy:
             matrix:
