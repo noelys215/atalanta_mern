@@ -18,7 +18,7 @@ export const loginUser = createAsyncThunk(
 			};
 			// make request to backend
 			const { data }: any = await axios.post(
-				'http://127.0.0.1:5000/api/users/login',
+				`${process.env.API_URL}/users/login`,
 				{ email, password },
 				config
 			);

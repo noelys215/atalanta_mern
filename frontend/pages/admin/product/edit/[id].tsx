@@ -141,7 +141,7 @@ export default function ProductEditScreen() {
 				},
 			};
 
-			const { data } = await axios.post(`http://127.0.0.1:5000/api/upload`, formData, config);
+			const { data } = await axios.post(`${process.env.API_URL}/upload`, formData, config);
 			setValue('image', data);
 
 			// setValue('image', images);

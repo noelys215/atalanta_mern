@@ -6,7 +6,7 @@ import { updateProduct } from '../actions/updateProduct';
 import { getProductDetails } from '../actions/getProductDetails';
 
 export const fetchProducts = createAsyncThunk('products/fetchProducts', async () => {
-	const { data } = await axios.get(`http://127.0.0.1:5000/api/products`);
+	const { data } = await axios.get(`${process.env.API_URL}/products`);
 	return data;
 });
 

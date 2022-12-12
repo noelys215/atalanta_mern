@@ -20,11 +20,7 @@ export const createOrder = createAsyncThunk(
 			};
 
 			// create post request with order data
-			const { data }: any = await axios.post(
-				`http://127.0.0.1:5000/api/orders`,
-				order,
-				config
-			);
+			const { data }: any = await axios.post(`${process.env.API_URL}/orders`, order, config);
 
 			Cookies.set('orders', JSON.stringify(order));
 			return data;

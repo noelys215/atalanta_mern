@@ -10,7 +10,7 @@ export const getAdminOrderHistory = createAsyncThunk(
 			} = getState();
 			const config = { headers: { Authorization: `Bearer ${userInfo.token}` } };
 
-			const { data }: any = await axios.get(`http://127.0.0.1:5000/api/orders`, config);
+			const { data }: any = await axios.get(`${process.env.API_URL}/orders`, config);
 
 			return data;
 		} catch (error: any) {

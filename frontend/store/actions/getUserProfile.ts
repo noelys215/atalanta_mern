@@ -17,7 +17,7 @@ export const getUserProfile = createAsyncThunk(
 					Authorization: `Bearer ${userInfo.token}`,
 				},
 			};
-			const { data }: any = await axios.get(`http://127.0.0.1:5000/api/users/${id}`, config);
+			const { data }: any = await axios.get(`${process.env.API_URL}/users/${id}`, config);
 			return data;
 		} catch (error: any) {
 			if (error.response && error.response.data.message) {

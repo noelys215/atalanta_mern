@@ -15,7 +15,7 @@ export const updateToShipped = createAsyncThunk(
 			const config = { headers: { Authorization: `Bearer ${userInfo.token}` } };
 
 			const { data }: any = await axios.put(
-				`http://127.0.0.1:5000/api/orders/${order._id}/ship`,
+				`${process.env.API_URL}/orders/${order._id}/ship`,
 				{},
 				config
 			);

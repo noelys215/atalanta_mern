@@ -34,7 +34,7 @@ export const registerUser = createAsyncThunk(
 			};
 			// make request to backend
 			await axios.post(
-				'http://127.0.0.1:5000/api/users/',
+				`${process.env.API_URL}/users/`,
 				{
 					email,
 					password,

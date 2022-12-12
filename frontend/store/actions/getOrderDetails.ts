@@ -16,7 +16,7 @@ export const getOrderDetails = createAsyncThunk(
 				headers: { Authorization: `Bearer ${userInfo.token}` },
 			};
 
-			const { data }: any = await axios.get(`http://127.0.0.1:5000/api/orders/${id}`, config);
+			const { data }: any = await axios.get(`${process.env.API_URL}/orders/${id}`, config);
 
 			Cookies.set('orders', JSON.stringify(data));
 			return data;

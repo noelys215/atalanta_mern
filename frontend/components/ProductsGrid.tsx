@@ -23,7 +23,7 @@ const ProductsGrid = (): ReactElement<ProductProps> => {
 
 	useEffect(() => {
 		const fetchData = async () => {
-			const { data } = await axios.get(`http://127.0.0.1:5000/api/products`);
+			const { data } = await axios.get(`${process.env.API_URL}/products`);
 
 			try {
 				const manShoes = data.filter(

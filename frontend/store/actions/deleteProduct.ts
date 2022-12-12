@@ -14,7 +14,7 @@ export const deleteProduct = createAsyncThunk(
 				headers: { Authorization: `Bearer ${userInfo.token}` },
 			};
 
-			await axios.delete(`http://127.0.0.1:5000/api/products/${id}`, config);
+			await axios.delete(`${process.env.API_URL}/products/${id}`, config);
 		} catch (error: any) {
 			if (error.response && error.response.data.message) {
 				return rejectWithValue(error.response.data.message);

@@ -34,7 +34,7 @@ export default function SearchScreen() {
 		const fetchData = async () => {
 			try {
 				setState({ loading: true });
-				const { data } = await axios.get(`http://127.0.0.1:5000/api/products`);
+				const { data } = await axios.get(`${process.env.API_URL}/products`);
 				const products = data.filter(
 					(prod: any) =>
 						prod.category.toLowerCase() === query.toLowerCase() ||

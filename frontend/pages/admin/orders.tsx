@@ -22,7 +22,6 @@ import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../../store/store';
 import { getAdminOrderHistory } from '../../store/actions/getAdminOrderHistory';
-import { getUserProfile } from '../../store/actions/getUserProfile';
 
 function AdminOrdersScreen() {
 	const router = useRouter();

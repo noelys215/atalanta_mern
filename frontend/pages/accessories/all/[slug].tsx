@@ -11,7 +11,7 @@ export default function SingleProduct({ product }: any) {
 export async function getStaticProps({ params }: any) {
 	const { slug } = params;
 
-	const { data } = await axios.get(`http://127.0.0.1:5000/api/products/`);
+	const { data } = await axios.get(`${process.env.API_URL}/products/`);
 	const product = data.find((prod: any) => prod.slug === slug);
 
 	return {
@@ -26,7 +26,7 @@ export async function getStaticProps({ params }: any) {
 }
 
 export async function getStaticPaths() {
-	const { data } = await axios.get(`http://127.0.0.1:5000/api/products`);
+	const { data } = await axios.get(`${process.env.API_URL}/products`);
 
 	const res = data.filter(
 		(prod: any) => prod.category === 'all' && prod.department === 'accessories'

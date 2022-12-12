@@ -10,10 +10,7 @@ export const getOrderHistory = createAsyncThunk(
 			} = getState();
 			const config = { headers: { Authorization: `Bearer ${userInfo.token}` } };
 
-			const { data }: any = await axios.get(
-				`http://127.0.0.1:5000/api/orders/myorders`,
-				config
-			);
+			const { data }: any = await axios.get(`${process.env.API_URL}/orders/myorders`, config);
 
 			return data;
 		} catch (error: any) {

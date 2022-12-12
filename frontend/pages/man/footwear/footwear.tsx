@@ -32,7 +32,7 @@ const manShoes: React.FC<ProductProps> = ({ footwear }) => {
 export default manShoes;
 
 export async function getStaticProps() {
-	const { data } = await axios.get(`http://127.0.0.1:5000/api/products`);
+	const { data } = await axios.get(`${process.env.API_URL}/products`);
 
 	const footwear = data.filter(
 		(prod: any) => prod.category === 'footwear' && prod.department === 'man'
