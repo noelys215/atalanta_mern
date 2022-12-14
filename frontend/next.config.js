@@ -5,7 +5,6 @@ module.exports = {
 		description: process.env.API_URL,
 	},
 	env: {
-		CI: false,
 		API_URL: 'http://127.0.0.1:5000/api',
 		JWT_SECRET: 'atalanta2022',
 		PAYPAL_CLIENT_ID:
