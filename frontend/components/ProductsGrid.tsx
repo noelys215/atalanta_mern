@@ -24,7 +24,6 @@ const ProductsGrid = (): ReactElement<ProductProps> => {
 	useEffect(() => {
 		const fetchData = async () => {
 			const { data } = await axios.get(`${process.env.API_URL}/products`);
-
 			try {
 				const manShoes = data.filter(
 					(prod: any) => prod.category === 'footwear' && prod.department === 'man'

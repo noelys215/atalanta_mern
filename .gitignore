@@ -7,8 +7,14 @@ node_modules
 .env
 .next/*
 .next
+
 # testing
 /coverage
+Dockerfile
+.dockerIgnore
+MakeFile
+
+docker-compose.yaml
 
 # next.js
 /.next/

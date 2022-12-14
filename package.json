@@ -7,7 +7,8 @@
 		"start": "node backend/server",
 		"server": "nodemon backend/server",
 		"client": "npm run dev --prefix frontend",
-		"sanity": "cd frontend/sanity/ && sanity start",
+		"next": "npm run start --prefix frontend",
+		"build": "npm run build --prefix frontend",
 		"dev": "concurrently \"npm run server\" \"npm run client\"",
 		"data:import": "node backend/seeder",
 		"data:destroy": "node backend/seeder -d",
@@ -29,6 +30,7 @@
 		"mongoose": "^6.6.5",
 		"multer": "^1.4.4",
 		"multer-gridfs-storage": "^5.0.2",
-		"multer-storage-cloudinary": "^4.0.0"
+		"multer-storage-cloudinary": "^4.0.0",
+		"vercel": "^28.8.0"
 	}
 }
